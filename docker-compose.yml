@@ -7,10 +7,19 @@ services:
       - "5000:5000"
     volumes:
       - .:/app
-      - history_db:/root/.rdr2-gambler  # Persist the SQLite DB
+      - history_db:/root/.rdr2-gambler
     environment:
       - PYTHONPATH=/app/src
       - FLASK_ENV=development
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
 
 volumes:
   history_db:
