@@ -19,5 +19,17 @@
 - Testing done using pytest
 
 ## TODOs
+- [ ] Initialize `src/core/telemetry/db.py` with SQLite schema.
+- [ ] Implement `--record` flag in `poker analyze` command.
+- [ ] Create `poker resolve` command to capture game outcomes.
+- [ ] Implement `dev report` for precision analysis and weight calibration.
 
 ## Project Status
+- **Phase 1: Infrastructure & Core Poker (COMPLETE)**
+    - Standardized CLI with `rich` and `click`.
+    - 7-Card Poker Evaluator.
+    - Monte Carlo Equity Engine.
+    - **Refactor:** Decoupled Service Layer with Pydantic V2 API (COMPLETE).
+- **Phase 2: Telemetry & Calibration (IN PROGRESS)**
+    - Architecture ready for telemetry integration via `PokerService`.
+    - Planning SQLite schema for hand recording.

@@ -1,7 +1,7 @@
+from pydantic import BaseModel, Field, field_validator, ConfigDict
+from typing import List, Optional
 import random
-from dataclasses import dataclass
-from enum import IntEnum, Enum
-from typing import List, Tuple
+from enum import IntEnum
 
 class Suit(IntEnum):
     CLUBS = 0
@@ -32,14 +32,13 @@ class Rank(IntEnum):
             return str(self.value)
         return self.name[0]
 
-@dataclass(frozen=True)
-class Card:
+class Card(BaseModel):
+    model_config = ConfigDict(frozen=True)
     rank: Rank
     suit: Suit
 
     @classmethod
     def from_str(cls, s: str) -> 'Card':
-        # e.g., "As", "10h", "2d"
         suit_map = {'c': Suit.CLUBS, 'd': Suit.DIAMONDS, 'h': Suit.HEARTS, 's': Suit.SPADES}
         rank_map = {
             '2': Rank.TWO, '3': Rank.THREE, '4': Rank.FOUR, '5': Rank.FIVE,
@@ -55,10 +54,13 @@ class Card:
             r_str = s[0]
             s_str = s[1].lower()
             
-        return cls(rank_map[r_str], suit_map[s_str])
+        return cls(rank=rank_map[r_str], suit=suit_map[s_str])
 
     def __repr__(self):
         return f"{str(self.rank)}{str(self.suit)}"
+
+    def __str__(self):
+        return self.__repr__()
 
     def rich_repr(self):
         suit_colors = {
@@ -77,9 +79,32 @@ class Card:
         symbol = suit_symbols[self.suit]
         return f"[{color}]{self.rank}{symbol}[/{color}]"
 
+class GameState(BaseModel):
+    hole_cards: List[Card]
+    community_cards: List[Card] = Field(default_factory=list)
+    num_opponents: int = 1
+    npc_aggression: List[float] = Field(default_factory=list)
+
+    @field_validator('npc_aggression', mode='before')
+    @classmethod
+    def set_default_aggression(cls, v, info):
+        if not v:
+            # Note: num_opponents might not be in info.data yet if it's being validated
+            # But we can default it or handle it in service.
+            return [] 
+        return v
+
+class SimulationResult(BaseModel):
+    win_rate: float
+    tie_rate: float
+    loss_rate: float
+    hand_name: str
+    recommendation: str
+    equity_iterations: int
+
 class Deck:
     def __init__(self):
-        self.cards = [Card(r, s) for r in Rank for s in Suit]
+        self.cards = [Card(rank=r, suit=s) for r in Rank for s in Suit]
         self.shuffle()
 
     def shuffle(self):

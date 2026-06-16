@@ -13,11 +13,11 @@ def test_card_from_str():
 
 def test_hand_evaluation_flush():
     cards = [
-        Card(Rank.ACE, Suit.SPADES),
-        Card(Rank.TEN, Suit.SPADES),
-        Card(Rank.TWO, Suit.SPADES),
-        Card(Rank.FIVE, Suit.SPADES),
-        Card(Rank.SEVEN, Suit.SPADES)
+        Card(rank=Rank.ACE, suit=Suit.SPADES),
+        Card(rank=Rank.TEN, suit=Suit.SPADES),
+        Card(rank=Rank.TWO, suit=Suit.SPADES),
+        Card(rank=Rank.FIVE, suit=Suit.SPADES),
+        Card(rank=Rank.SEVEN, suit=Suit.SPADES)
     ]
     rank = Evaluator.evaluate_5_cards(cards)
     assert rank.rank_type == 6 # Flush
@@ -25,11 +25,11 @@ def test_hand_evaluation_flush():
 
 def test_hand_evaluation_full_house():
     cards = [
-        Card(Rank.ACE, Suit.SPADES),
-        Card(Rank.ACE, Suit.HEARTS),
-        Card(Rank.ACE, Suit.CLUBS),
-        Card(Rank.TEN, Suit.SPADES),
-        Card(Rank.TEN, Suit.HEARTS)
+        Card(rank=Rank.ACE, suit=Suit.SPADES),
+        Card(rank=Rank.ACE, suit=Suit.HEARTS),
+        Card(rank=Rank.ACE, suit=Suit.CLUBS),
+        Card(rank=Rank.TEN, suit=Suit.SPADES),
+        Card(rank=Rank.TEN, suit=Suit.HEARTS)
     ]
     rank = Evaluator.evaluate_5_cards(cards)
     assert rank.rank_type == 7 # Full House

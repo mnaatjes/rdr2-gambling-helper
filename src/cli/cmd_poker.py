@@ -25,39 +25,32 @@ def poker():
 def analyze(hole, community, opponents, aggression):
     """Analyze current poker hand and odds."""
     try:
+        # Use the Service Layer instead of orchestrating here
+        from core.poker.service import PokerService
+        from core.poker.models import Card
+
+        with console.status("[bold green]Simulating RDR2 game progression..."):
+            result = PokerService.analyze_hand(
+                hole=list(hole),
+                community=list(community),
+                num_opponents=opponents,
+                aggression=[aggression] * opponents
+            )
+
+        # Parse cards for rendering (Service returns raw data, UI needs objects)
         player_cards = [Card.from_str(c) for c in hole]
         comm_cards = [Card.from_str(c) for c in community]
+
     except Exception as e:
-        console.print(f"[red]Error parsing cards: {e}[/red]")
+        console.print(f"[red]Error analyzing hand: {e}[/red]")
         return
 
-    # Calculate base odds
-    with console.status("[bold green]Simulating RDR2 game progression..."):
-        results = RDR2Predictive.adjust_for_npc_behavior(
-            player_cards, comm_cards, [aggression] * opponents, iterations=2000
-        )
-
-    # Current hand strength
-    all_cards = player_cards + comm_cards
-    if len(all_cards) >= 5:
-        rank = Evaluator.evaluate_7_cards(all_cards)
-        hand_name = Evaluator.rank_to_name(rank.rank_type)
-    else:
-        hand_name = "Incomplete Hand"
-
-    # Recommendation
-    win_rate = results['win_rate']
-    if win_rate > 0.7:
-        rec = "[bold green]RECOMMENDATION: GO ALL-IN / RAISE BIG[/bold green]"
-    elif win_rate > 0.4:
-        rec = "[bold yellow]RECOMMENDATION: CALL / VALUE BET[/bold yellow]"
-    elif win_rate > 0.2:
-        rec = "[bold blue]RECOMMENDATION: CHECK / SMALL CALL[/bold blue]"
-    else:
-        rec = "[bold red]RECOMMENDATION: FOLD[/bold red]"
-    
-    # Render the enhanced dashboard
+    # Render the enhanced dashboard using the standardized result object
     dashboard = render_poker_dashboard(
-        player_cards, comm_cards, results, hand_name, rec
+        player_cards, 
+        comm_cards, 
+        result.dict(), # Convert Pydantic to dict for renderer compatibility
+        result.hand_name, 
+        result.recommendation
     )
     console.print(dashboard)
