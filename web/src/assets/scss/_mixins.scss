@@ -1,0 +1,28 @@
+@import 'variables';
+
+@mixin distressed-edge {
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    border: $border-distressed;
+    mask-image: linear-gradient(to bottom, transparent, black); // Placeholder for actual SVG mask
+  }
+}
+
+@mixin western-panel($bg: $rich-black, $color: $pure-white) {
+  background-color: $bg;
+  color: $color;
+  border: $border-brass;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  padding: $spacing-md;
+  border-radius: 2px;
+}
+
+@mixin hud-text {
+  font-family: $font-hud;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}

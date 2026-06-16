@@ -1,0 +1,28 @@
+// RDR2 Branding Variables
+
+// Colors
+$primary-red: #EE0000;
+$deep-red: #BB012D;
+$rich-black: #191C1F;
+$parchment: #EFE1BD;
+$brass-gold: #7B612A;
+$table-green: #1E4D2B;
+$paper-ink: #2C2621;
+$pure-white: #FFFFFF;
+
+// Fonts (Google Font Equivalents)
+$font-title: 'Rock Salt', cursive;      // Rugged title font
+$font-hud: 'Bebas Neue', sans-serif;    // Minimalist HUD font
+$font-body: 'Roboto Slab', serif;       // Western body font
+$font-handwriting: 'Homemade Apple', cursive; // Journal font
+
+// Spacing
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 2rem;
+$spacing-xl: 4rem;
+
+// Borders
+$border-brass: 2px solid $brass-gold;
+$border-distressed: 1px solid rgba($brass-gold, 0.3);
