@@ -1,0 +1,16 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+      - history_db:/root/.rdr2-gambler  # Persist the SQLite DB
+    environment:
+      - PYTHONPATH=/app/src
+      - FLASK_ENV=development
+
+volumes:
+  history_db:
