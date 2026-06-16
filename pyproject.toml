@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rdr2-gambler"
+version = "0.1.0"
+description = "A utility to aid in Red Dead Redemption 2 gambling."
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "click",
+    "rich",
+    "pydantic",
+]
+
+[project.scripts]
+rdr2-gambler = "cli.main:cli"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["cli", "core", "ui", "core.poker"]
