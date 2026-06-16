@@ -21,6 +21,7 @@ We utilize high-contrast "Blood Red" accents against deep charcoal backgrounds, 
 | **Rich Black** | `#191C1F` | Main background for "HUD-style" dashboards. |
 | **Parchment** | `#EFE1BD` | Background for "Ledger-style" history and settings views. |
 | **Brass Gold** | `#7B612A` | Border accents, icon frames, and secondary highlights. |
+| **Table Green** | `#1E4D2B` | Iconic RDR2 poker/blackjack felt green. Used for game-table display areas. |
 | **Paper Ink** | `#2C2621` | Dark brown/black used for text on Parchment backgrounds. |
 | **Pure White** | `#FFFFFF` | Primary text color on dark backgrounds. |
 
@@ -45,14 +46,17 @@ The landing page where the user chooses their assistance tool.
     *   **History**: Navigate to the Ledger.
     *   **Settings**: General configuration.
 
-### Page 2: Poker Dashboard (The "HUD View")
-A high-fidelity, real-time analysis tool designed for use while playing the game.
-*   **Layout**:
-    *   **Top**: Active Street (Pre-Flop, Flop, etc.) and Session ID.
-    *   **Center**: Interactive card selectors for Hole and Community cards.
-    *   **Right Rail**: Real-time Win/Loss/Tie equity gauges.
-    *   **Bottom**: Large, semantic "Action Recommendation" bar.
-*   **Transitions**: Smooth, subtle fades to mirror the game's cinematic feel.
+### Page 2: Game Dashboard (The "HUD View")
+Every game page (Poker, Blackjack, etc.) follows a consistent **Two-Section Layout** optimized for the "Live Assistant" flow.
+
+*   **Section A: The Interaction Forge (Input)**
+    *   **Purpose**: Strategic data entry (cards, betting aggression, number of opponents).
+    *   **Visuals**: Dark charcoal background with skeuomorphic buttons.
+    *   **Layout**: High-density form layout designed for quick interaction.
+*   **Section B: The Game Table (Display/Output)**
+    *   **Purpose**: Real-time rendering of API results and hand visualizations.
+    *   **Visuals**: Styled like a physical gambling table with **Table Green (`#1E4D2B`)** felt textures and brass border accents.
+    *   **Features**: Displays the current "best hand" and win probabilities using the circular "HUD Core" equity gauges.
 
 ### Page 3: The History Ledger (The "Arthur's Journal" View)
 A detailed review of past sessions using the Parchment theme.
@@ -66,6 +70,13 @@ A detailed review of past sessions using the Parchment theme.
 
 ## 4. Component Styling Principles
 
+*   **Universal Card Deck Components**
+    *   We maintain a designated set of UI components for playing cards (`<GameCard />`).
+    *   **Reusable**: The same component is utilized across Poker, Blackjack, and History views.
+    *   **Dynamic**: Color-coded based on suit (`#EE0000` for Hearts/Diamonds, `#FFFFFF` for Spades/Clubs).
+*   **Responsive & Mobile-Friendly**
+    *   **Layout**: Uses CSS Grid and Flexbox to ensure the "Interaction Forge" and "Game Table" transition seamlessly from a side-by-side desktop view to a vertical mobile stack.
+    *   **Inputs**: Touch-friendly card selectors designed for one-handed operation on mobile devices.
 *   **Distressed Borders**: Use CSS masks or SVG filters to give panels a slightly "torn paper" or "weathered wood" edge.
 *   **The "Cores" Style**: Use circular progress bars for win equity that mirror the Health/Stamina "Cores" from the game's HUD.
 *   **Skeuomorphic Inputs**: Buttons should look like stamped metal or carved wood, rather than flat digital rectangles.
@@ -77,9 +88,9 @@ A detailed review of past sessions using the Parchment theme.
 
 ### "The Live Assistant" Flow
 1.  **Selection**: User clicks "Poker" from the Saloon page.
-2.  **Input**: User taps icons representing their cards. Visual feedback shows the selected cards in a "fan" layout.
-3.  **Simulation**: API call is triggered. A loading state shows a subtle "spinning revolver cylinder" or "shuffling cards" animation.
-4.  **Advice**: UI displays the recommendation in bold Toronto Gothic.
+2.  **Input**: User taps icons in the "Interaction Forge" to select their cards. Visual feedback shows the selected cards in a "fan" layout.
+3.  **Simulation**: API call is triggered. A loading state shows a subtle "spinning revolver cylinder" animation.
+4.  **Advice**: The "Game Table" section updates with the recommendation and equity "Cores."
 5.  **Log**: User taps a "Save Snapshot" icon to record to the History Service.
 
 ### "The Post-Game Review" Flow
