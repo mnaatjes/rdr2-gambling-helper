@@ -1,5 +1,7 @@
 # Red Dead Redemption 2 Gambling Utility
 
+![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
+
 ## Description
 
 This is a utility that has scripts to aid in gambling help

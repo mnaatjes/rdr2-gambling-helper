@@ -87,6 +87,11 @@ The Poker Utility provides real-time analysis of Texas Hold'em hands, specifical
         "Exploitative AI Analysis", 
         "rdr2-gambler poker analyze --hole Ad Ah --community Kc --aggression 0.9"
     )
+    example_table.add_row(
+        "Record & Resolve Hand", 
+        "rdr2-gambler poker analyze --hole 8c 9c --record\n"
+        "rdr2-gambler poker resolve --id <ID> --outcome win"
+    )
 
     # 3. Parameter Quick-Ref
     param_ref = Table.grid(padding=(0, 2))
@@ -97,6 +102,8 @@ The Poker Utility provides real-time analysis of Texas Hold'em hands, specifical
     param_ref.add_row("--community", "Input visible community cards (Flop, Turn, River).")
     param_ref.add_row("--opponents", "Number of NPCs at the table (affects win probability).")
     param_ref.add_row("--aggression", "NPC betting intensity (0.0 to 1.0). Higher values weight odds against 'Omniscient' AI.")
+    param_ref.add_row("--record", "Persist this hand in the local History database for future calibration.")
+    param_ref.add_row("--round-id", "Link this analysis to an existing round (e.g., recording the Turn after the Flop).")
 
     # 4. Construct the Panel
     help_group = Group(

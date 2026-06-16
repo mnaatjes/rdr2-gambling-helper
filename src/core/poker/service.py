@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Dict, Any
 from .models import Card, GameState, SimulationResult
 from .predictive import RDR2Predictive
 from .evaluator import Evaluator
@@ -11,7 +11,10 @@ class PokerService:
         community: Optional[Union[List[str], List[Card]]] = None, 
         num_opponents: int = 1,
         aggression: Optional[List[float]] = None,
-        iterations: int = 2000
+        iterations: int = 2000,
+        record: bool = False,
+        round_id: Optional[str] = None,
+        **kwargs
     ) -> SimulationResult:
         """
         High-level API for analyzing a poker hand.
@@ -39,7 +42,7 @@ class PokerService:
         # 4. Get Recommendation
         recommendation = AdvisoryEngine.get_recommendation(results['win_rate'])
         
-        return SimulationResult(
+        sim_result = SimulationResult(
             win_rate=results['win_rate'],
             tie_rate=results['tie_rate'],
             loss_rate=results['loss_rate'],
@@ -47,3 +50,30 @@ class PokerService:
             recommendation=recommendation,
             equity_iterations=iterations
         )
+
+        # 5. Optional Telemetry (Service B Integration)
+        if record:
+            from core.history.service import HistoryService
+            
+            # If we don't have a round_id but we have a session_id, start a new round
+            if not round_id:
+                session_id = kwargs.get('session_id')
+                if not session_id:
+                    session_id = HistoryService.start_session(game_type="poker")
+                
+                round_id = HistoryService.start_round(session_id)
+            
+            uhh_state = {
+                "meta": {"version": "1.0", "game": "poker"},
+                "state": {
+                    "hole": [str(c) for c in player_cards],
+                    "community": [str(c) for c in comm_cards],
+                    "opponents": num_opponents,
+                    "context": {"aggression": npc_agg}
+                }
+            }
+            
+            HistoryService.record_snapshot(round_id, uhh_state, sim_result.model_dump())
+            sim_result.metadata = {"round_id": round_id}
+
+        return sim_result

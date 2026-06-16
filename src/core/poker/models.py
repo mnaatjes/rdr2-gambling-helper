@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, field_validator, ConfigDict
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 import random
 from enum import IntEnum
 
@@ -101,6 +101,7 @@ class SimulationResult(BaseModel):
     hand_name: str
     recommendation: str
     equity_iterations: int
+    metadata: Optional[Dict[str, Any]] = None
 
 class Deck:
     def __init__(self):

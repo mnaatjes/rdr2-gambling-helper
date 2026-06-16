@@ -1,6 +1,7 @@
 import click
 from .cmd_blackjack import blackjack
 from .cmd_poker import poker
+from .cmd_history import history
 
 @click.group()
 @click.option("-v", "--verbose", is_flag=True, help="Enable verbose logging.")
@@ -13,3 +14,4 @@ def cli(verbose: bool):
 # Register subcommands
 cli.add_command(blackjack)
 cli.add_command(poker)
+cli.add_command(history)
