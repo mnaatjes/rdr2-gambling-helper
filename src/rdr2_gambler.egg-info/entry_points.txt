@@ -1,2 +1,0 @@
-[console_scripts]
-rdr2-gambler = cli.main:cli
