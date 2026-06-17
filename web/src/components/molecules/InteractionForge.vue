@@ -1,67 +1,55 @@
 <script setup lang="ts">
 import { usePokerStore } from '../../store/poker';
-import CardSelector from '../atomic/CardSelector.vue';
-import GameButton from '../atomic/GameButton.vue';
+import CentralDeck from '../atomic/CentralDeck.vue';
 
 const store = usePokerStore();
 
-const toggleHole = (card: string) => {
-  if (store.hole.includes(card)) {
-    store.hole = store.hole.filter(c => c !== card);
-  } else if (store.hole.length < 2) {
-    store.hole.push(card);
-  }
-};
-
-const toggleCommunity = (card: string) => {
-  if (store.community.includes(card)) {
-    store.community = store.community.filter(c => c !== card);
-  } else if (store.community.length < 5) {
-    store.community.push(card);
-  }
+const resolve = (outcome: 'win' | 'loss' | 'fold' | 'tie') => {
+  store.resolveHand(outcome);
 };
 </script>
 
 <template>
   <div class="interaction-forge">
-    <section class="forge-section">
-      <h3><span class="step">1</span> Hole Cards</h3>
-      <CardSelector :active-cards="store.hole" @select="toggleHole" />
-    </section>
-
-    <section class="forge-section">
-      <h3><span class="step">2</span> Community Cards</h3>
-      <CardSelector :active-cards="store.community" @select="toggleCommunity" />
-    </section>
-
-    <section class="forge-section settings">
-      <h3><span class="step">3</span> Environment</h3>
-      <div class="field">
-        <label>Opponents: {{ store.opponents }}</label>
-        <input type="range" v-model.number="store.opponents" min="1" max="7" step="1" />
+    <!-- Stage Indicator HUD -->
+    <div class="stage-hud">
+      <div class="hud-status" :class="store.currentStage.toLowerCase().replace(' ', '-')">
+        {{ store.currentStage }}
       </div>
-      <div class="field">
-        <label>NPC Aggression: {{ store.aggression }}</label>
-        <input type="range" v-model.number="store.aggression" min="0.1" max="1.0" step="0.1" />
-      </div>
-      <div class="field toggle">
-        <label>Record Hand History</label>
-        <input type="checkbox" v-model="store.recording" />
-      </div>
-    </section>
+    </div>
 
-    <div class="actions">
-      <GameButton 
-        label="Analyze Hand" 
-        variant="primary" 
-        @click="store.runAnalysis()" 
-        :disabled="store.hole.length < 2"
-      />
-      <GameButton 
-        label="Reset Table" 
-        variant="secondary" 
-        @click="store.clearHand()" 
-      />
+    <!-- Central Deck -->
+    <div class="forge-main">
+      <CentralDeck />
+    </div>
+
+    <!-- Actions Panel -->
+    <div class="forge-actions">
+      <!-- Loading State -->
+      <div v-if="store.loading" class="status-panel loading">
+        <div class="spinner"></div>
+        <span class="hud-hint">Consulting the Odds...</span>
+      </div>
+
+      <!-- Error State with Retry -->
+      <div v-else-if="store.error" class="status-panel error">
+        <span class="error-msg">{{ store.error }}</span>
+        <button class="action-btn retry" @click="store.runAnalysis()">Retry Analysis</button>
+      </div>
+
+      <!-- Resolution Panel (Active Game) -->
+      <div class="resolution-panel" v-else-if="store.roundId">
+        <button class="action-btn fold" @click="resolve('fold')">Fold</button>
+        <button class="action-btn loss" @click="resolve('loss')">Lost</button>
+        <button class="action-btn win" @click="resolve('win')">Won</button>
+      </div>
+
+      <!-- Awaiting State (Initial) -->
+      <div class="awaiting-panel" v-else>
+        <span class="hud-hint" v-if="store.allInPlayCards.length === 0">Awaiting Player Cards...</span>
+        <span class="hud-hint" v-else-if="!store.isStageComplete">Finish selecting cards for {{ store.currentStage }}...</span>
+        <button v-else class="action-btn analyze" @click="store.runAnalysis()">Analyze Hand</button>
+      </div>
     </div>
   </div>
 </template>
@@ -71,63 +59,136 @@ const toggleCommunity = (card: string) => {
 @import '../../assets/scss/mixins';
 
 .interaction-forge {
-  @include hud-panel;
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
+  gap: $spacing-md;
   height: 100%;
 }
 
-.forge-section {
-  h3 {
+.stage-hud {
+  @include hud-panel;
+  text-align: center;
+  padding: $spacing-sm;
+
+  .hud-status {
     @include font-hud-condensed;
     font-size: 1.2rem;
-    color: $sunburst;
-    margin-bottom: $spacing-sm;
-    display: flex;
-    align-items: center;
-    gap: $spacing-sm;
+    color: $brass-gold;
+    transition: all 0.3s ease;
 
-    .step {
-      width: 20px;
-      height: 20px;
-      background: $brass-gold;
-      color: $rich-black;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
+    &.awaiting { opacity: 0.5; color: $pure-white; }
+    &.pre-flop, &.the-flop, &.the-turn, &.the-river {
+      color: $iconic-red;
+      text-shadow: 0 0 10px rgba($iconic-red, 0.4);
     }
   }
 }
 
-.settings {
-  .field {
-    margin-bottom: $spacing-md;
-    label {
-      display: block;
-      @include font-hud-condensed;
-      font-size: 0.9rem;
-      margin-bottom: 2px;
-    }
-    input[type="range"] {
-      width: 100%;
-      accent-color: $iconic-red;
-    }
-  }
-  .toggle {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    input { width: auto; }
-  }
+.forge-actions {
+  @include hud-panel;
+  margin-top: auto;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.actions {
+.status-panel {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: $spacing-sm;
-  margin-top: auto;
+  width: 100%;
+
+  .error-msg {
+    color: $iconic-red;
+    @include font-hud-condensed;
+    font-size: 0.9rem;
+  }
+}
+
+.resolution-panel {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-sm;
+  width: 100%;
+}
+
+.action-btn {
+  @include font-hud-condensed;
+  padding: $spacing-sm $spacing-md;
+  background: rgba($pure-black, 0.6);
+  border: 1px solid $brass-gold;
+  color: $pure-white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+
+  &:hover {
+    background: $brass-gold;
+    color: $pure-black;
+  }
+
+  &.analyze {
+    width: 100%;
+    background: rgba($iconic-red, 0.2);
+    border-color: $iconic-red;
+    color: $iconic-red;
+
+    &:hover {
+      background: $iconic-red;
+      color: $pure-white;
+    }
+  }
+
+  &.retry {
+    font-size: 0.8rem;
+    padding: $spacing-xs $spacing-sm;
+  }
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba($brass-gold, 0.3);
+  border-top-color: $brass-gold;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.action-btn {
+  @include font-hud-condensed;
+  padding: $spacing-sm;
+  border: 1px solid rgba($pure-white, 0.2);
+  color: $pure-white;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: $brass-gold;
+    background: rgba($brass-gold, 0.1);
+  }
+
+  &.fold { border-color: rgba($blood-red, 0.5); color: $blood-red; }
+  &.win { border-color: rgba($sunburst, 0.5); color: $sunburst; }
+}
+
+.hud-hint {
+  @include font-hud-condensed;
+  font-size: 0.8rem;
+  opacity: 0.6;
+  display: block;
+  text-align: center;
+}
+
+.forge-error {
+  color: $blood-red;
+  font-size: 0.8rem;
+  text-align: center;
+  @include font-hud-condensed;
 }
 </style>

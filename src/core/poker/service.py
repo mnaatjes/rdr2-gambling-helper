@@ -36,8 +36,15 @@ class PokerService:
         if len(all_cards) >= 5:
             rank = Evaluator.evaluate_7_cards(all_cards)
             hand_name = Evaluator.rank_to_name(rank.rank_type)
+        elif len(all_cards) == 2:
+            c1, c2 = player_cards
+            if c1.rank == c2.rank:
+                hand_name = f"Pocket {c1.rank.name.capitalize()}s"
+            else:
+                high_card = c1 if c1.rank > c2.rank else c2
+                hand_name = f"{high_card.rank.name.capitalize()} High"
         else:
-            hand_name = "Incomplete Hand"
+            hand_name = "Waiting for Board..."
             
         # 4. Get Recommendation
         recommendation = AdvisoryEngine.get_recommendation(results['win_rate'])

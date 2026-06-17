@@ -53,8 +53,9 @@ def render_poker_dashboard(
     top_row = Columns([cards_panel, strength_panel], expand=True)
     
     # Recommendation bar
-    rec_text = Text.from_markup(recommendation)
-    rec_panel = Panel(rec_text, border_style="bright_green", padding=(1, 2))
+    rec_color = "green" if results['win_rate'] > 0.7 else "yellow" if results['win_rate'] > 0.4 else "blue" if results['win_rate'] > 0.2 else "red"
+    rec_text = Text.from_markup(f"[bold {rec_color}]RECOMMENDATION: {recommendation}[/bold {rec_color}]")
+    rec_panel = Panel(rec_text, border_style=f"bright_{rec_color}", padding=(1, 2))
 
     return Group(
         top_row,
