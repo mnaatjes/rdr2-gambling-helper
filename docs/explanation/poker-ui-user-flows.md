@@ -26,6 +26,20 @@ Analysis is triggered as the game moves through these specific RDR2 stages:
 | **Turn** | 2 | 4 | UI must force exactly 1 new card. |
 | **River** | 2 | 5 | UI must force exactly 1 new card. |
 
+## 1.3. Terminology: Stages vs. Actions
+It is critical to distinguish between what happens **on the table** (Stages) and what the **player does** (Actions).
+
+### Game Stages (Automatic by Card Count)
+The user does not "click a Flop button". Instead, the UI provides card slots. When the required number of cards is entered, the tool recognizes the stage:
+*   **The Flop:** The moment 3 cards are dealt to the center.
+*   **The Turn:** The moment a 4th card is dealt.
+*   **The River:** The moment the 5th and final card is dealt.
+
+### Player Actions (User Input)
+These are decisions the player makes based on the tool's advice. Only one action needs a specific UI button in our tool:
+*   **Fold:** The player chooses to give up the hand. In the UI, this is a **Resolution Action** that ends the current round recording and clears the table.
+*   **Bet/Call/Check:** These are in-game actions that don't require specific buttons in our tool (as they are part of the game progression), but the resulting outcome (Win/Loss) will be recorded at the end.
+
 ## 2. User Flow: The Gambling Loop
 
 ### 2.1. Initial Hand Entry (Pre-Flop)
@@ -65,7 +79,17 @@ To prevent accidental UI resets and maintain telemetry (History Service) integri
 
 ## 4. Telemetry Integration (Silent Recorder)
 *   **Analysis Step:** Every click of "Analyze" triggers a `POST /api/poker/analyze` with `record: true`.
-*   **The Resolution Step:** Once the River is reached (or the player folds), the UI must present the **"Resolve Outcome"** prompt.
-    *   Options: **WIN, LOSS, FOLD**.
-    *   Input: **Chips Won/Lost**.
-    *   Effect: Clears the table and marks the Round ID as closed in the database.
+*   **The Resolution Step:** Once a hand concludes (either at the River or earlier via a Fold), the UI must present the **Resolution Panel**.
+
+### Resolution UI Elements
+| Element | Logic | API Action |
+| :--- | :--- | :--- |
+| **"I Won" Button** | Captures chips won. | `resolve_round(outcome='win')` |
+| **"I Lost" Button** | Captures chips lost. | `resolve_round(outcome='loss')` |
+| **"I Folded" Button** | Ends hand immediately. | `resolve_round(outcome='fold')` |
+| **Chip Input** | Optional numeric field for profit/loss. | Passed as `net_chips` |
+
+Once any resolution button is clicked:
+1.  The round is closed in the database.
+2.  The UI performs a "Clean Sweep" animation (clearing cards).
+3.  The tool returns to the **Pre-Flop** state.
