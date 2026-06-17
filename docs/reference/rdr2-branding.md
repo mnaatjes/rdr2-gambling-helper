@@ -48,7 +48,7 @@ The RDR2 palette is grounded in a "maximalist" high-contrast scheme of red and b
 ### Environmental & HUD Colors
 | Element | Hex Code | Visual Preview | Description |
 | :--- | :--- | :--- | :--- |
-| **Rich Black** | `#121212` | ![#121212](https://via.placeholder.com/15/121212?text=+) | Primary background for HUD and dark menus. |
+| **Rich Black** | `#141414` | ![#141414](https://via.placeholder.com/15/141414?text=+) | Primary background for HUD and dark menus. |
 | **Table Green** | `#1E4D2B` | ![#1E4D2B](https://via.placeholder.com/15/1E4D2B?text=+) | Felt texture color used for Poker and Blackjack tables. |
 | **Parchment** | `#EFE1BD` | ![#EFE1BD](https://via.placeholder.com/15/EFE1BD?text=+) | "Satin Souffle" neutral used for journals and ledgers. |
 | **Brass Gold** | `#7B612A` | ![#7B612A](https://via.placeholder.com/15/7B612A?text=+) | "Brazen Brass" for borders, icon rings, and status highlights. |

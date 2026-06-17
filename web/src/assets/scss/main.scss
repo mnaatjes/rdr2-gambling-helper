@@ -1,3 +1,4 @@
+@import 'fonts';
 @import 'variables';
 @import 'mixins';
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Homemade+Apple&family=Rock+Salt&family=Roboto+Slab:wght@400;700&display=swap');
@@ -14,12 +15,11 @@ body {
   font-family: $font-body;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  -moz-osx-view-smoothing: grayscale;
 }
 
-h1, h2, h3 {
-  font-family: $font-title;
-  color: $primary-red;
+h1, h2, h3, h4, h5, h6 {
+  @include font-branding;
 }
 
 button {

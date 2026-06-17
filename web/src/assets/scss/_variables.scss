@@ -1,20 +1,27 @@
-// RDR2 Branding Variables
+// RDR2 Branding Variables - Refined from docs/reference/rdr2-branding.md
 
-// Colors
-$primary-red: #EE0000;
-$deep-red: #BB012D;
-$rich-black: #191C1F;
-$parchment: #EFE1BD;
-$brass-gold: #7B612A;
+// Primary Brand Colors
+$iconic-red: #EE0000;
+$blood-red: #B90303;
+$deep-crimson: #BD081A;
+
+// Environmental & HUD Colors
+$rich-black: #141414;
 $table-green: #1E4D2B;
+$parchment: #EFE1BD;
 $paper-ink: #2C2621;
+$brass-gold: #7B612A;
+$sunburst: #FEAC01;
 $pure-white: #FFFFFF;
 
-// Fonts (Google Font Equivalents)
-$font-title: 'Rock Salt', cursive;      // Rugged title font
-$font-hud: 'Bebas Neue', sans-serif;    // Minimalist HUD font
-$font-body: 'Roboto Slab', serif;       // Western body font
-$font-handwriting: 'Homemade Apple', cursive; // Journal font
+// Opacity Variants for HUD
+$hud-bg: rgba($rich-black, 0.85);
+
+// Fonts (Google Font Equivalents & Local)
+$font-title: 'Chinese Rocks', cursive; // Official Branding
+$font-hud: 'Bebas Neue', sans-serif;    // Condensed HUD
+$font-body: 'Roboto Slab', serif;       // Western Slab-Serif
+$font-handwriting: 'Homemade Apple', cursive; // Journal
 
 // Spacing
 $spacing-xs: 0.25rem;
@@ -23,6 +30,7 @@ $spacing-md: 1rem;
 $spacing-lg: 2rem;
 $spacing-xl: 4rem;
 
-// Borders
-$border-brass: 2px solid $brass-gold;
-$border-distressed: 1px solid rgba($brass-gold, 0.3);
+// Borders & Effects
+$border-brass: 1px solid $brass-gold;
+$border-distressed: 1px solid rgba($brass-gold, 0.4);
+$shadow-hud: 0 4px 15px rgba(0, 0, 0, 0.6);
